@@ -1,0 +1,10 @@
+local-authority-type,name,local_authority_type_state
+CA,Council area,CA0
+CC,City corporation,CC0
+CTY,County,CTY0
+DIS,District,DIS0
+LBO,London borough,LBO0
+NMD,Non-metropolitan district,NMD0
+MD,Metropolitan district,MD0
+UA,Unitary authority,UA0
+SRA,Strategic Regional Authority,SRA0

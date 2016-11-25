@@ -87,3 +87,10 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+dump.rdb
+
+.swp
+.idea/
+.vagrant/
+

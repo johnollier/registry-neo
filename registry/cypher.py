@@ -1,23 +1,39 @@
+register_query_template = '''
+    MATCH (e: {0})-[sr:STATE]->(es)
+    OPTIONAL MATCH (e)-[lr]->(le)
+    WHERE type(lr)<>'STATE'
+    RETURN e.public_id as public_id, id(es) as state_id, sr as state_rel, es as entity_state, id(le) as link_id,
+    lr as link_rel, le.public_id as linked_public_id, labels(le) as labels
+    ORDER BY public_id
+    LIMIT {{page_size}}'''
 
-state_query_template = '''
+entity_query_template = '''
+    MATCH (e: {0})-[sr:STATE]->(es)
+    WHERE e.public_id={{public_id}}
+    OPTIONAL MATCH (e)-[lr]->(le)
+    WHERE type(lr)<>'STATE'
+    RETURN id(es) as state_id, sr as state_rel,es as entity_state, id(le) as link_id,lr as link_rel,
+    le.public_id as linked_public_id, labels(le) as labels
+    ORDER BY sr.from'''
+
+state_by_time_query_template = '''
+    MATCH (e: {0})-[sr:STATE]->(es)
+    WHERE e.public_id={{public_id}}
+    AND sr.from < {{timestamp}} AND sr.to > {{timestamp}}
+    OPTIONAL MATCH (e)-[lr]->(le)
+    WHERE type(lr)<>'STATE'
+    AND lr.from < {{timestamp}} AND lr.to > {{timestamp}}
+    RETURN id(es) as state_id, sr as state_rel,es as entity_state, id(le) as link_id,lr as link_rel,
+    le.public_id as linked_public_id, labels(le) as labels
+    ORDER BY sr.from'''
+
+state_by_entry_query_template = '''
     MATCH (entity: {0} {{public_id: {{public_id}} }})-[state_rel:STATE]->(entity_state)
-    RETURN state_rel.from AS from, state_rel.to AS to, entity_state
-    ORDER BY state_rel.from'''
+    WHERE state_rel.entry_number = {{entry_number}}
+    RETURN state_rel, entity_state'''
 
-link_query_template = '''MATCH (entity: {0} {{public_id: {{public_id}} }})-[rel]->(related_entity)
-    WHERE NOT type(rel) = 'STATE'
-    RETURN rel.from AS from, rel.to AS to, related_entity.public_id AS related_id,
-    labels(related_entity)[0] AS related_register
-    ORDER BY rel.from'''
-
-
-state_by_time_query_template = '''MATCH (entity: {0} {{public_id: {{public_id}} }})-[state_rel:STATE]->(entity_state)
-    WHERE state_rel.from < {{year}} AND state_rel.to > {{year}}
-    RETURN state_rel.from AS from, state_rel.to AS to, entity_state ORDER BY state_rel.from '''
-
-
-link_by_time_query_template = '''MATCH (entity: {0} {{public_id: {{public_id}} }})-[rel]->(related_entity)
-    WHERE NOT type(rel) = 'STATE' AND  rel.from < {{year}} AND rel.to > {{year}}
-    RETURN rel.from AS from, rel.to AS to, related_entity.public_id AS related_id,
-    labels(related_entity)[0] AS related_register
-    ORDER BY rel.from'''
+create_state_query_template = '''
+    MATCH (entity: {0} {{public_id: {{public_id}} }})
+    CREATE (entity_state: {0}_state {{ properties }})
+    CREATE (entity)-[:STATE {{`from`: {{from}}, `to`: {{to}}, `created`: {{created}},
+    `entry_number`: {{entry_number}} }}]->(entity_state)'''
