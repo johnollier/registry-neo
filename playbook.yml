@@ -1,0 +1,31 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: add repo for java 8
+      apt_repository: repo='ppa:webupd8team/java' state=present
+    - name: add neo4j key
+      apt_key:
+        id: "neo4j"
+        url: "https://debian.neo4j.org/neotechnology.gpg.key"
+        state: present
+    - name: add neo4j repo
+      apt_repository: repo='deb http://debian.neo4j.org/repo stable/' state='present'
+    - name: set licence selected
+      shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
+    - name: set licence seen
+      shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 seen true | /usr/bin/debconf-set-selections
+    - name: install java 8
+      apt: name=oracle-java8-installer
+    - name: install pip2
+      apt: name=python-pip
+    - name: install pip3
+      apt: name=python3-pip
+    - name: install virtualenv
+      pip: name=virtualenv
+    - name: install virtualenvwrapper
+      pip: name=virtualenvwrapper
+    - name: install neo4j
+      apt: name=neo4j=3.1.3
+
+      
