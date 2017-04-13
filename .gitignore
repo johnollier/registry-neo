@@ -90,7 +90,7 @@ ENV/
 
 dump.rdb
 
-.swp
+*.swp
 .idea/
 .vagrant/
 

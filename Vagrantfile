@@ -10,23 +10,21 @@ Vagrant.configure("2") do |config|
   # neo4j bolt port
   config.vm.network "forwarded_port", guest: 7687, host: 7687,  host_ip: "127.0.0.1"
 
-  # Create a private network, which allows host-only access to the machine
-  # using a specific IP.
+  # Create a private network, which allows host-only access to the machine using a specific IP.
   #  config.vm.network "private_network", ip: "192.168.33.10"
 
   # config.vm.synced_folder "../data", "/vagrant_data"
 
   config.vm.provider "virtualbox" do |vb|
-    # Customize the amount of memory on the VM:
     vb.memory = "1024"
   end
 
   config.vm.provision "ansible_local" do |ansible|
-    ansible.playbook = "playbook.yml"
-    ansible.verbose        = true
-    ansible.install        = true
-    ansible.limit          = "all"
-    ansible.inventory_path = "inventory"
+    ansible.playbook = "vagrant/playbook.yml"
+    ansible.verbose = true
+    ansible.install = true
+    ansible.limit = "all"
+    ansible.inventory_path = "vagrant/inventory"
   end
 
 end
